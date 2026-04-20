@@ -163,6 +163,42 @@
       <div id="generated-command-container" style="margin-top: 2rem;"></div>
     `;
 
+        // ============================================================
+        const threeCore = ['opt-synapse', 'opt-sliding-sync', 'opt-postgres'];
+        const caddyId = 'opt-caddy';
+        let updating = false;
+
+        function syncThreeAndOptionalCaddy(changedId, isNowChecked) {
+            if (updating) return;
+            updating = true;
+
+            if (isNowChecked) {
+                // Check all three core + caddy
+                [...threeCore, caddyId].forEach(id => {
+                    const cb = document.getElementById(id);
+                    if (cb && !cb.checked) cb.checked = true;
+                });
+            } else {
+                // Uncheck only the three core (leave caddy alone)
+                threeCore.forEach(id => {
+                    const cb = document.getElementById(id);
+                    if (cb && cb.checked) cb.checked = false;
+                });
+            }
+
+            updating = false;
+        }
+
+        threeCore.forEach(id => {
+            const cb = document.getElementById(id);
+            if (cb) {
+                cb.addEventListener('change', function (e) {
+                    syncThreeAndOptionalCaddy(this.id, this.checked);
+                });
+            }
+        });
+        // ============================================================
+
         document.getElementById('generate-command-btn').addEventListener('click', function () {
             const selected = [];
             if (document.getElementById('opt-synapse').checked) selected.push('synapse');
