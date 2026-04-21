@@ -263,6 +263,7 @@
   }
 
   // ----- BUTTON 2: Custom Generator -----
+  // ----- BUTTON 2: Custom Generator -----
   console.log('🔵 Step 13: Setting up btnCustom listener');
   if (btnCustom) {
     btnCustom.addEventListener('click', function () {
@@ -299,8 +300,7 @@
           <span><strong>Coturn TURN Server</strong> – For calls behind NAT/firewalls</span>
         </label>
 
-        <!-- Divider -->
-        <div class="admin-divider"></div>
+        <div class="divider admin-divider">Admin Options</div>
 
         <label>
           <input type="checkbox" id="opt-admin-panel" value="admin-panel">
@@ -309,18 +309,19 @@
         
         <!-- Dynamic Admin Credentials Section (hidden by default) -->
         <div id="admin-credentials-section" style="display: none; margin-left: 1.5rem; margin-top: 0.75rem; margin-bottom: 0.75rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border-left: 3px solid #3b82f6;">
-          <div style="margin-bottom: 0.75rem;">
+          <div style="margin-bottom: 0.75rem;" id="admin-username-container">
             <label for="admin-username" style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: #1e293b; font-size: 0.9rem;">
               👤 Admin Username <span style="color: #ef4444;">*</span>
             </label>
-            <input type="text" id="admin-username" placeholder="e.g., admin" style="width: 100%; max-width: 300px; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;">
+            <input type="text" id="admin-username" placeholder="e.g., admin" style="width: 100%; max-width: 300px; padding: 0.5rem 0.75rem; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; transition: all 0.2s;">
+            <div id="admin-username-error" class="admin-error-message" style="display: none; margin-top: 0.25rem; font-size: 0.75rem; color: #ef4444;"></div>
           </div>
-          <div>
+          <div id="admin-password-container">
             <label for="admin-password" style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: #1e293b; font-size: 0.9rem;">
               🔒 Admin Password <span style="color: #ef4444;">*</span>
             </label>
-            <input type="password" id="admin-password" placeholder="Enter strong password" style="width: 100%; max-width: 300px; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;">
-            <div style="margin-top: 0.25rem; font-size: 0.75rem; color: #64748b;">Minimum 8 characters, use a mix of letters, numbers, and symbols</div>
+            <input type="password" id="admin-password" placeholder="Enter strong password" style="width: 100%; max-width: 300px; padding: 0.5rem 0.75rem; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; transition: all 0.2s;">
+            <div id="admin-password-error" class="admin-error-message" style="display: none; margin-top: 0.25rem; font-size: 0.75rem; color: #ef4444;"></div>
           </div>
         </div>
         
@@ -330,7 +331,7 @@
         </label>
       </div>
 
-      <div class="domain-divider"></div>
+      <div class="divider admin-divider">Domain and IP</div>
 
       <div style="margin: 2rem 0;">
         <div style="margin-bottom: 1.25rem;">
@@ -351,6 +352,98 @@
       <button id="generate-command-btn" class="generate-btn">✨ Generate Setup Bash File</button>
       <div id="generated-command-container" style="margin-top: 2rem;"></div>
     `;
+
+      // Function to clear admin validation errors
+      function clearAdminValidation() {
+        const usernameInput = document.getElementById('admin-username');
+        const passwordInput = document.getElementById('admin-password');
+        const usernameError = document.getElementById('admin-username-error');
+        const passwordError = document.getElementById('admin-password-error');
+
+        if (usernameInput) {
+          usernameInput.style.borderColor = '#cbd5e1';
+          usernameInput.classList.remove('input-error');
+        }
+        if (passwordInput) {
+          passwordInput.style.borderColor = '#cbd5e1';
+          passwordInput.classList.remove('input-error');
+        }
+        if (usernameError) usernameError.style.display = 'none';
+        if (passwordError) passwordError.style.display = 'none';
+      }
+
+      // Function to validate admin fields
+      function validateAdminFields() {
+        const adminPanelCheckbox = document.getElementById('opt-admin-panel');
+        const usernameInput = document.getElementById('admin-username');
+        const passwordInput = document.getElementById('admin-password');
+        const usernameError = document.getElementById('admin-username-error');
+        const passwordError = document.getElementById('admin-password-error');
+
+        let isValid = true;
+
+        // Clear previous validation
+        clearAdminValidation();
+
+        // Only validate if admin panel is checked
+        if (adminPanelCheckbox && adminPanelCheckbox.checked) {
+          // Validate username
+          if (!usernameInput || !usernameInput.value.trim()) {
+            if (usernameInput) {
+              usernameInput.style.borderColor = '#ef4444';
+              usernameInput.classList.add('input-error');
+            }
+            if (usernameError) {
+              usernameError.textContent = '⚠️ Admin username is required';
+              usernameError.style.display = 'block';
+            }
+            isValid = false;
+          }
+
+          // Validate password
+          if (!passwordInput || !passwordInput.value.trim()) {
+            if (passwordInput) {
+              passwordInput.style.borderColor = '#ef4444';
+              passwordInput.classList.add('input-error');
+            }
+            if (passwordError) {
+              passwordError.textContent = '⚠️ Admin password is required';
+              passwordError.style.display = 'block';
+            }
+            isValid = false;
+          }
+        }
+
+        return isValid;
+      }
+
+      // Add real-time validation clearing when user types
+      function setupAdminValidation() {
+        const usernameInput = document.getElementById('admin-username');
+        const passwordInput = document.getElementById('admin-password');
+
+        if (usernameInput) {
+          usernameInput.addEventListener('input', function () {
+            if (this.value.trim()) {
+              this.style.borderColor = '#cbd5e1';
+              this.classList.remove('input-error');
+              const error = document.getElementById('admin-username-error');
+              if (error) error.style.display = 'none';
+            }
+          });
+        }
+
+        if (passwordInput) {
+          passwordInput.addEventListener('input', function () {
+            if (this.value.trim()) {
+              this.style.borderColor = '#cbd5e1';
+              this.classList.remove('input-error');
+              const error = document.getElementById('admin-password-error');
+              if (error) error.style.display = 'none';
+            }
+          });
+        }
+      }
 
       // Add event listener for the admin panel checkbox
       const adminPanelCheckbox = document.getElementById('opt-admin-panel');
@@ -374,7 +467,8 @@
             adminCredentialsSection.style.animation = 'fadeIn 0.3s ease';
           } else {
             adminCredentialsSection.style.display = 'none';
-            // Clear the fields when hidden
+            // Clear validation and fields when hidden
+            clearAdminValidation();
             const usernameInput = document.getElementById('admin-username');
             const passwordInput = document.getElementById('admin-password');
             if (usernameInput) usernameInput.value = '';
@@ -384,6 +478,9 @@
       } else {
         console.error('Admin panel elements not found!');
       }
+
+      // Setup admin validation listeners
+      setupAdminValidation();
 
       // Get input elements AFTER they've been created
       const domainInput = document.getElementById('domain-input');
@@ -432,10 +529,15 @@
           const domainField = document.getElementById('domain-input');
           const ipField = document.getElementById('ip-input');
 
-          // Validate inputs before proceeding
-          const isValid = validateCustomInputs(domainField, ipField);
+          // Validate domain and IP inputs
+          const isValidDomainIp = validateCustomInputs(domainField, ipField);
 
-          if (!isValid) {
+          // Validate admin fields (only if admin panel is checked)
+          const isAdminValid = validateAdminFields();
+
+          const adminPanelSelected = document.getElementById('opt-admin-panel')?.checked || false;
+
+          if (!isValidDomainIp) {
             // Scroll to show the errors
             const firstError = document.querySelector('#domain-error, #ip-error');
             if (firstError) {
@@ -444,18 +546,27 @@
             return; // Stop execution if validation fails
           }
 
+          if (adminPanelSelected && !isAdminValid) {
+            // Scroll to admin credentials section
+            const adminSection = document.getElementById('admin-credentials-section');
+            if (adminSection) {
+              adminSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              // Highlight the section with a temporary background
+              adminSection.style.transition = 'background 0.3s ease';
+              adminSection.style.background = '#fee2e2';
+              setTimeout(() => {
+                adminSection.style.background = '#f8fafc';
+              }, 1000);
+            }
+            return; // Stop execution if admin validation fails
+          }
+
           const domain = domainField ? domainField.value.trim() : '';
           const ip = ipField ? ipField.value.trim() : '';
 
           // Get admin credentials if admin panel is selected
-          const adminPanelSelected = document.getElementById('opt-admin-panel')?.checked || false;
           const adminUsername = document.getElementById('admin-username')?.value || '';
           const adminPassword = document.getElementById('admin-password')?.value || '';
-
-          if (adminPanelSelected && (!adminUsername || !adminPassword)) {
-            alert('Please enter both Admin Username and Password');
-            return;
-          }
 
           const customCommand = `mkdir synapse && cd synapse \nbash synapse-setup.sh`;
           const container = document.getElementById('generated-command-container');

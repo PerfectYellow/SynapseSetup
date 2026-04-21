@@ -631,101 +631,247 @@ button {
         opacity: 0;
         transform: translateY(-5px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-/* Divider styling */
-.admin-divider {
-  margin: 1rem 0;
-  border-top: 2px solid #e2e8f0;
-  position: relative;
-}
-
-/* Optional: Add a subtle label to the divider */
-.admin-divider::before {
-  content: "Admin Options";
-  position: absolute;
-  top: -12px;
-  left: 0;
-  background: white;
-  padding: 0 10px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #64748b;
-  letter-spacing: 0.5px;
-}
-
-.admin-divider:hover {
-  border-top-color: #94a3b8;
-  transition: border-color 0.2s ease;
-}
-
-.domain-divider {
-  margin: 1rem 0;
-  border-top: 2px solid #e2e8f0;
-  position: relative;
-}
-
-.domain-divider::before {
-  content: "Domain and IP";
-  position: absolute;
-  top: -12px;
-  left: 0;
-  background: white;
-  padding: 0 10px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #64748b;
-  letter-spacing: 0.5px;
-}
-
 /* Optional: Make the divider stand out more on hover */
 .domain-divider:hover {
-  border-top-color: #94a3b8;
-  transition: border-color 0.2s ease;
+    border-top-color: #94a3b8;
+    transition: border-color 0.2s ease;
 }
 
 /* Animation for smooth appearance/disappearance */
 #admin-credentials-section {
-  transition: all 0.3s ease;
-  overflow: hidden;
+    transition: all 0.3s ease;
+    overflow: hidden;
 }
 
 /* Focus states for inputs */
 #admin-credentials-section input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 /* Required field indicator */
 #admin-credentials-section label span {
-  font-weight: 600;
+    font-weight: 600;
 }
 
 /* Optional: Add a subtle icon to the section */
 #admin-credentials-section::before {
-  content: "🔐";
-  position: absolute;
-  left: -25px;
-  font-size: 14px;
-  opacity: 0.6;
+    content: "🔐";
+    position: absolute;
+    left: -25px;
+    font-size: 14px;
+    opacity: 0.6;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 #admin-credentials-section {
-  transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+/* Admin validation error styles */
+.admin-error-message {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    padding-left: 0.25rem;
+    animation: slideDown 0.2s ease;
+}
+
+#admin-username.input-error,
+#admin-password.input-error {
+    border-color: #ef4444 !important;
+    background-color: #fff5f5;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Highlight animation for admin section when validation fails */
+@keyframes highlightFlash {
+    0% {
+        background-color: #fee2e2;
+    }
+
+    100% {
+        background-color: #f8fafc;
+    }
+}
+
+.highlight-error {
+    animation: highlightFlash 1s ease;
+}
+
+/* Divider styling */
+.divider {
+    margin: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.divider::before {
+    margin-right: 1rem;
+}
+
+.divider::after {
+    margin-left: 1rem;
+}
+
+/* Hover effect for all dividers */
+.divider:hover {
+    color: #3b82f6;
+    letter-spacing: 1px;
+}
+
+.divider:hover::before,
+.divider:hover::after {
+    border-bottom-color: #3b82f6;
+    transform: scaleY(1.2);
+}
+
+/* Optional: Different hover colors for different dividers */
+.admin-divider:hover {
+    color: #064444;
+}
+
+.admin-divider:hover::before,
+.admin-divider:hover::after {
+    border-bottom-color: #060000;
+}
+
+.network-divider:hover {
+    color: #10b981;
+}
+
+.network-divider:hover::before,
+.network-divider:hover::after {
+    border-bottom-color: #10b981;
+}
+
+.database-divider:hover {
+    color: #8b5cf6;
+}
+
+.database-divider:hover::before,
+.database-divider:hover::after {
+    border-bottom-color: #8b5cf6;
+}
+
+/* Alternative: Animated underline effect */
+.divider {
+    position: relative;
+}
+
+.divider:hover::before {
+    transform: scaleX(1.1);
+    transform-origin: right;
+}
+
+.divider:hover::after {
+    transform: scaleX(1.1);
+    transform-origin: left;
+}
+
+/* Glow effect on hover */
+.divider:hover {
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+.divider:hover::before,
+.divider:hover::after {
+    box-shadow: 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Pulsing animation on hover */
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.divider:hover {
+    animation: pulse 0.5s ease;
+}
+
+/* Gradient line effect on hover */
+.divider:hover::before {
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, #e2e8f0, #3b82f6, #e2e8f0);
+    border-image-slice: 1;
+}
+
+.divider:hover::after {
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, #e2e8f0, #3b82f6, #e2e8f0);
+    border-image-slice: 1;
+}
+
+/* Smooth sliding effect */
+.divider {
+    overflow: hidden;
+}
+
+.divider::before {
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.divider::after {
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.divider:hover::before {
+    transform: translateX(-5px);
+}
+
+.divider:hover::after {
+    transform: translateX(5px);
 }
