@@ -63,6 +63,7 @@ body.has-fixed-header {
         border-bottom-color: transparent;
         box-shadow: none;
     }
+
     100% {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(12px);
@@ -174,6 +175,20 @@ body.has-fixed-header {
     transform: translateY(-2px);
 }
 
+/* Active button state */
+#action-buttons button.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+    box-shadow: 0 12px 20px -12px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Optional: Add transition for smooth state change */
+#action-buttons button {
+    transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
 /* ----- Info Cards Container - 3 column grid aligned with buttons ----- */
 .info-cards-container {
     display: grid;
@@ -200,9 +215,17 @@ body.has-fixed-header {
     box-sizing: border-box;
 }
 
-.info-card:nth-child(1) { animation-delay: 0.1s; }
-.info-card:nth-child(2) { animation-delay: 0.2s; }
-.info-card:nth-child(3) { animation-delay: 0.3s; }
+.info-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.info-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.info-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
 
 .info-card:hover {
     transform: translateY(-5px);
@@ -272,6 +295,7 @@ body.has-fixed-header {
         opacity: 1;
         transform: translateY(0);
     }
+
     to {
         opacity: 0;
         transform: translateY(20px);
@@ -303,6 +327,7 @@ body.has-fixed-header {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -342,7 +367,10 @@ input[type="checkbox"] {
 }
 
 /* Prevent zoom on input focus */
-input, select, textarea, button {
+input,
+select,
+textarea,
+button {
     font-size: 16px;
 }
 
@@ -484,36 +512,36 @@ input, select, textarea, button {
     body.has-fixed-header {
         padding-top: 70px;
     }
-    
+
     #action-buttons {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     #action-buttons button {
         white-space: normal;
         word-break: keep-all;
         font-size: 1rem;
         padding: 0.85rem 1rem;
     }
-    
+
     .info-cards-container {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .info-card {
         min-width: auto;
     }
-    
+
     .info-card h3 {
         font-size: 1.1rem;
     }
-    
+
     .info-card p {
         font-size: 0.85rem;
     }
-    
+
     button {
         font-size: 1rem;
         padding: 0.7rem 1.5rem;
@@ -528,12 +556,62 @@ input, select, textarea, button {
         white-space: normal;
         word-break: keep-all;
     }
-    
+
     .info-card h3 {
         font-size: 1.1rem;
     }
-    
+
     .info-card p {
         font-size: 0.85rem;
     }
+}
+
+.error {
+    border: 2px solid red !important;
+    background-color: #ffe6e6 !important;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.info {
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 5px;
 }
