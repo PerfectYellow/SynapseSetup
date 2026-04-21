@@ -34,36 +34,25 @@
 
     // Reset previous error styles
     if (domainInput) {
-      domainInput.style.borderColor = '#e2e8f0';
-      domainInput.style.boxShadow = 'none';
-      domainInput.style.backgroundColor = 'white';
-      // Remove existing error message
+      domainInput.classList.remove('input-error');
       const existingDomainError = document.getElementById('domain-error');
       if (existingDomainError) existingDomainError.remove();
     }
 
     if (ipInput) {
-      ipInput.style.borderColor = '#e2e8f0';
-      ipInput.style.boxShadow = 'none';
-      ipInput.style.backgroundColor = 'white';
-      // Remove existing error message
+      ipInput.classList.remove('input-error');
       const existingIpError = document.getElementById('ip-error');
       if (existingIpError) existingIpError.remove();
     }
 
     // Validate Domain
     if (domainInput && (!domainInput.value || domainInput.value.trim() === '')) {
-      domainInput.style.borderColor = '#ef4444';
-      domainInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
-      domainInput.style.backgroundColor = '#fee2e2';
+      domainInput.classList.add('input-error');
 
       // Add error message
       const errorMsg = document.createElement('div');
       errorMsg.id = 'domain-error';
-      errorMsg.style.color = '#ef4444';
-      errorMsg.style.fontSize = '0.85rem';
-      errorMsg.style.marginTop = '0.5rem';
-      errorMsg.style.fontWeight = '500';
+      errorMsg.className = 'error-message';
       errorMsg.innerHTML = '⚠️ Domain address is required. Please enter a valid domain (e.g., matrix.example.com)';
       domainInput.parentNode.appendChild(errorMsg);
 
@@ -72,17 +61,12 @@
 
     // Validate IP Address
     if (ipInput && (!ipInput.value || ipInput.value.trim() === '')) {
-      ipInput.style.borderColor = '#ef4444';
-      ipInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
-      ipInput.style.backgroundColor = '#fee2e2';
+      ipInput.classList.add('input-error');
 
       // Add error message
       const errorMsg = document.createElement('div');
       errorMsg.id = 'ip-error';
-      errorMsg.style.color = '#ef4444';
-      errorMsg.style.fontSize = '0.85rem';
-      errorMsg.style.marginTop = '0.5rem';
-      errorMsg.style.fontWeight = '500';
+      errorMsg.className = 'error-message';
       errorMsg.innerHTML = '⚠️ Server IP address is required. Please enter a valid IP address (e.g., 192.0.2.1)';
       ipInput.parentNode.appendChild(errorMsg);
 
@@ -97,22 +81,15 @@
     if (!inputElement) return;
 
     inputElement.addEventListener('input', function () {
-      // Reset border color and background
-      this.style.borderColor = '#e2e8f0';
-      this.style.boxShadow = 'none';
-      this.style.backgroundColor = 'white';
-
-      // Remove error message
+      this.classList.remove('input-error');
       const errorMsg = document.getElementById(errorId);
       if (errorMsg) errorMsg.remove();
     });
 
     inputElement.addEventListener('focus', function () {
-      if (this.style.borderColor === 'rgb(239, 68, 68)' || this.style.borderColor === '#ef4444') {
-        this.style.borderColor = '#e2e8f0';
-        this.style.boxShadow = 'none';
-        this.style.backgroundColor = 'white';
-      }
+      this.classList.remove('input-error');
+      const errorMsg = document.getElementById(errorId);
+      if (errorMsg) errorMsg.remove();
     });
   }
 
@@ -349,7 +326,7 @@
       // Get input elements AFTER they've been created
       const domainInput = document.getElementById('domain-input');
       const ipInput = document.getElementById('ip-input');
-      
+
       // Setup real-time validation clearing
       if (domainInput) setupInputValidation(domainInput, 'domain-error');
       if (ipInput) setupInputValidation(ipInput, 'ip-error');
@@ -388,11 +365,11 @@
       if (generateBtn) {
         generateBtn.addEventListener('click', function () {
           console.log('🟢 Generate button clicked');
-          
+
           // Get fresh references to inputs
           const domainField = document.getElementById('domain-input');
           const ipField = document.getElementById('ip-input');
-          
+
           // Validate inputs before proceeding
           const isValid = validateCustomInputs(domainField, ipField);
 

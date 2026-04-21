@@ -566,52 +566,72 @@ button {
     }
 }
 
-.error {
-    border: 2px solid red !important;
-    background-color: #ffe6e6 !important;
+/* Form input error states */
+.input-error {
+    border: 2px solid #ef4444 !important;
+    background-color: #fee2e2 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
 
+/* Error message styling */
 .error-message {
-    color: red;
-    font-size: 0.9em;
-    margin-top: 5px;
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
     display: block;
+    animation: fadeInUp 0.3s ease-out;
 }
 
+/* Required field indicator */
+.required {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+/* Form group styling */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 1.25rem;
 }
 
-label {
+.form-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #1e293b;
 }
 
-input,
-select {
+.form-group input {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    max-width: 400px;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    outline: none;
+    background: white;
 }
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
+.form-group input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-button:hover {
-    background-color: #45a049;
+.form-group .info-text {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: #64748b;
 }
 
-.info {
-    color: #666;
-    font-size: 0.85em;
-    margin-top: 5px;
+/* Animation for error messages */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
