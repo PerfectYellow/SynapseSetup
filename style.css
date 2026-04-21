@@ -13,58 +13,63 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    /* Centers title vertically at start */
-    transition: padding-top 0.4s cubic-bezier(0.2, 0.9, 0.4, 1);
+    transition: padding-top 0.6s cubic-bezier(0.2, 0.9, 0.4, 1);
+    overflow-x: hidden;
+    width: 100%;
 }
 
 body.has-fixed-header {
     justify-content: flex-start;
-    /* Allow content to flow normally after shrink */
-    padding-top: 80px;
+    padding-top: 90px;
 }
 
-/* ----- Header: fixed overlay, absolutely centered ----- */
+/* ----- Header: centered initially ----- */
 #main-header {
     position: fixed;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
     width: 100%;
-    /* Full width to allow inner centering */
-    max-width: none;
     background: transparent;
-    box-shadow: none;
     padding: 0;
     z-index: 100;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 1s cubic-bezier(0.2, 0.9, 0.4, 1);
+    transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1);
     pointer-events: none;
 }
 
-/* ----- Header shrunk state: gradient background for readability ----- */
+/* ----- Header shrunk state with smooth background fade ----- */
 #main-header.shrink {
     top: 0;
-    left: 0;
-    right: 0;
-    transform: translate(0, 0);
-    width: 100%;
-
-    /* Smooth gradient background */
-    background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(248, 250, 252, 0.9) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    border-bottom: 1px solid rgba(203, 213, 225, 0.5);
-
+    transform: translateY(0);
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    box-shadow: none;
+    border-bottom: 1px solid transparent;
     padding: 0.9rem 2rem;
-    justify-content: center;
     pointer-events: auto;
+    animation: fadeInBackground 0.6s cubic-bezier(0.2, 0.9, 0.4, 1) forwards;
+}
+
+@keyframes fadeInBackground {
+    0% {
+        background: rgba(255, 255, 255, 0);
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+        border-bottom-color: transparent;
+        box-shadow: none;
+    }
+    100% {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom-color: rgba(203, 213, 225, 0.5);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
 }
 
 /* ----- Title styling ----- */
@@ -76,7 +81,7 @@ body.has-fixed-header {
     gap: 0.1rem;
     font-weight: 800;
     text-align: center;
-    transition: all 1s cubic-bezier(0.2, 0.9, 0.4, 1);
+    transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1);
     color: transparent;
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #3b82f6 100%);
     -webkit-background-clip: text;
@@ -89,10 +94,10 @@ body.has-fixed-header {
     font-size: 6rem;
     line-height: 1.1;
     letter-spacing: -0.02em;
-    transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1);
+    transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1);
 }
 
-/* Shrunk: inline one line, still centered */
+/* Shrunk: inline one line */
 #main-header.shrink #main-title {
     flex-direction: row;
     gap: 0.5rem;
@@ -108,42 +113,173 @@ body.has-fixed-header {
     white-space: pre;
 }
 
-/* ----- Buttons (unchanged) ----- */
-#action-buttons {
+/* Container for buttons and info cards */
+.buttons-wrapper {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* ----- Buttons Container - 3 column grid ----- */
+#action-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     justify-content: center;
-    flex-wrap: wrap;
-    margin: 2rem 1rem 1rem;
-    transition: opacity 0.4s;
+    width: 100%;
+    margin: 2rem 0 0.5rem 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+#action-buttons.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 #action-buttons.hidden {
     display: none;
 }
 
-button {
-    background: white;
-    border: 1px solid #cbd5e1;
-    padding: 0.9rem 2rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    border-radius: 60px;
+/* Individual button styling */
+#action-buttons button {
+    width: 100%;
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e2e8f0;
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    font-weight: 590;
+    border-radius: 44px;
     cursor: pointer;
-    box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
     color: #1e293b;
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-button:hover {
+#action-buttons button:hover {
     background: #3b82f6;
     border-color: #3b82f6;
     color: white;
-    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 12px 20px -12px rgba(59, 130, 246, 0.4);
     transform: translateY(-2px);
 }
 
-/* ----- Content (output box hidden by default) ----- */
+/* ----- Info Cards Container - 3 column grid aligned with buttons ----- */
+.info-cards-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0.5rem auto 0;
+    padding: 0;
+}
+
+/* Individual Info Card - NOT clickable */
+.info-card {
+    width: 100%;
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    cursor: default;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.5s ease-out backwards;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.info-card:nth-child(1) { animation-delay: 0.1s; }
+.info-card:nth-child(2) { animation-delay: 0.2s; }
+.info-card:nth-child(3) { animation-delay: 0.3s; }
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Colors */
+.info-card.full-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.info-card.custom-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.info-card.config-card {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+/* Card Content */
+.info-card h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-card p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.95;
+    margin-bottom: 1rem;
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+/* Hide info cards */
+.info-cards-container.hidden {
+    display: none;
+}
+
+/* Fade out animation for cards */
+.info-card.fade-out {
+    animation: fadeOutDown 0.3s ease-out forwards;
+}
+
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+        display: none;
+    }
+}
+
+/* ----- Content area ----- */
 #content-area {
     width: 100%;
     max-width: 1000px;
@@ -159,7 +295,18 @@ button:hover {
     border: 1px solid #e2e8f0;
     margin-top: 1rem;
     display: none;
-    /* Hidden until button click */
+    animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 pre {
@@ -194,45 +341,40 @@ input[type="checkbox"] {
     accent-color: #3b82f6;
 }
 
+/* Prevent zoom on input focus */
+input, select, textarea, button {
+    font-size: 16px;
+}
+
 .generate-btn {
-    margin-top: 1rem;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white;
+    background: linear-gradient(135deg, #3b82f6, #1e3a8a);
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
     font-weight: 600;
+    padding: 0.85rem 2rem;
+    border-radius: 44px;
     cursor: pointer;
-    transition: all 0.2s;
-    margin-right: 0.5rem;
+    box-shadow: 0 8px 20px -6px rgba(59, 130, 246, 0.4);
+    transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-right: 0.75rem;
 }
 
 .generate-btn:hover {
+    background: linear-gradient(135deg, #2563eb, #172554);
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 14px 26px -8px rgba(59, 130, 246, 0.6);
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-    .title-line {
-        font-size: 3.8rem;
-    }
-
-    #main-header.shrink .title-line {
-        font-size: 1.3rem;
-    }
-
-    body.has-fixed-header {
-        padding-top: 70px;
-    }
-
-    button {
-        font-size: 1rem;
-        padding: 0.7rem 1.5rem;
-    }
+.generate-btn:active {
+    transform: translateY(1px);
 }
 
-/* ----- Copy button overlay ----- */
+/* ----- Copy button styling ----- */
 .command-container {
     position: relative;
     margin: 1.5rem 0 0.5rem;
@@ -241,21 +383,15 @@ input[type="checkbox"] {
 .command-container pre {
     margin: 0;
     padding: 2rem;
-    /* More padding all around */
     padding-right: 120px;
-    /* Extra space for copy button */
     overflow-x: auto;
-    /* Horizontal scroll when needed */
     white-space: pre;
-    /* Prevent wrapping */
     font-family: 'Monaco', 'Menlo', 'Cascadia Code', monospace;
     font-size: 1.1rem;
-    /* Slightly larger text */
     line-height: 1.6;
     background: #0f172a;
     color: #e2e8f0;
     border-radius: 16px;
-    /* Slightly rounder corners */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -293,7 +429,7 @@ input[type="checkbox"] {
     color: white;
 }
 
-/* ----- Configuration options styling ----- */
+/* ----- Configuration styling ----- */
 .config-group {
     display: flex;
     flex-direction: column;
@@ -335,16 +471,69 @@ input[type="checkbox"] {
     cursor: pointer;
 }
 
-.config-note {
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    background: #f1f5f9;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: #475569;
+/* ----- Responsive Design ----- */
+@media (max-width: 768px) {
+    .title-line {
+        font-size: 3.8rem;
+    }
+
+    #main-header.shrink .title-line {
+        font-size: 1.3rem;
+    }
+
+    body.has-fixed-header {
+        padding-top: 70px;
+    }
+    
+    #action-buttons {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    #action-buttons button {
+        white-space: normal;
+        word-break: keep-all;
+        font-size: 1rem;
+        padding: 0.85rem 1rem;
+    }
+    
+    .info-cards-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .info-card {
+        min-width: auto;
+    }
+    
+    .info-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .info-card p {
+        font-size: 0.85rem;
+    }
+    
+    button {
+        font-size: 1rem;
+        padding: 0.7rem 1.5rem;
+    }
 }
 
-.config-note i {
-    font-style: normal;
-    font-weight: 600;
+/* For tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+    #action-buttons button {
+        font-size: 0.9rem;
+        padding: 0.85rem 0.5rem;
+        white-space: normal;
+        word-break: keep-all;
+    }
+    
+    .info-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .info-card p {
+        font-size: 0.85rem;
+    }
 }
