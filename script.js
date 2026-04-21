@@ -271,57 +271,119 @@
       hideInfoCards();
       outputDiv.style.display = 'block';
       outputDiv.innerHTML = `
-        <h2 style="margin-bottom: 1.5rem; font-weight: 600;">⚙️ Customize Your Docker Stack</h2>
-        <p>Select the components you want to include in your Matrix deployment:</p>
-        <div class="checkbox-group">
-          <label>
-            <input type="checkbox" id="opt-synapse" value="synapse" checked>
-            <span><strong>Matrix Colony (Synapse Backend)</strong> – Core Matrix homeserver</span>
-          </label>
-          <label>
-            <input type="checkbox" id="opt-sliding-sync" value="sliding-sync" checked>
-            <span><strong>Sliding Sync</strong> – Required for Element X clients</span>
-          </label>
-          <label>
-            <input type="checkbox" id="opt-postgres" value="postgres" checked>
-            <span><strong>PostgreSQL</strong> – Database backend</span>
-          </label>
-          <label>
-            <input type="checkbox" id="opt-caddy" value="caddy" checked>
-            <span><strong>Caddy</strong> – Reverse proxy with automatic SSL</span>
-          </label>
-          <label>
-            <input type="checkbox" id="opt-livekit" value="livekit">
-            <span><strong>LiveKit + LK JWT Server</strong> – Voice/video calls</span>
-          </label>
-          <label>
-            <input type="checkbox" id="opt-coturn" value="coturn">
-            <span><strong>Coturn TURN Server</strong> – For calls behind NAT/firewalls</span>
-          </label>
-          <label>
-            <input type="checkbox" id="opt-admin" value="admin">
-            <span><strong>Admin Panel</strong> – For managing users and rooms and more</span>
-          </label>
-        </div>
-        <div style="margin: 2rem 0;">
-          <div style="margin-bottom: 1.25rem;">
-            <label for="domain-input" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #1e293b;">
-              🌐 Your Domain Address <span style="color: #ef4444;">*</span>
+      <h2 style="margin-bottom: 1.5rem; font-weight: 600;">⚙️ Customize Your Docker Stack</h2>
+      <p>Select the components you want to include in your Matrix deployment:</p>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" id="opt-synapse" value="synapse" checked>
+          <span><strong>Matrix Colony (Synapse Backend)</strong> – Core Matrix homeserver</span>
+        </label>
+        <label>
+          <input type="checkbox" id="opt-sliding-sync" value="sliding-sync" checked>
+          <span><strong>Sliding Sync</strong> – Required for Element X clients</span>
+        </label>
+        <label>
+          <input type="checkbox" id="opt-postgres" value="postgres" checked>
+          <span><strong>PostgreSQL</strong> – Database backend</span>
+        </label>
+        <label>
+          <input type="checkbox" id="opt-caddy" value="caddy" checked>
+          <span><strong>Caddy</strong> – Reverse proxy with automatic SSL</span>
+        </label>
+        <label>
+          <input type="checkbox" id="opt-livekit" value="livekit">
+          <span><strong>LiveKit + LK JWT Server</strong> – Voice/video calls</span>
+        </label>
+        <label>
+          <input type="checkbox" id="opt-coturn" value="coturn">
+          <span><strong>Coturn TURN Server</strong> – For calls behind NAT/firewalls</span>
+        </label>
+
+        <!-- Divider -->
+        <div class="admin-divider"></div>
+
+        <label>
+          <input type="checkbox" id="opt-admin-panel" value="admin-panel">
+          <span><strong>Admin Panel</strong> – Admin Panel for managing synapse server</span>
+        </label>
+        
+        <!-- Dynamic Admin Credentials Section (hidden by default) -->
+        <div id="admin-credentials-section" style="display: none; margin-left: 1.5rem; margin-top: 0.75rem; margin-bottom: 0.75rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border-left: 3px solid #3b82f6;">
+          <div style="margin-bottom: 0.75rem;">
+            <label for="admin-username" style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: #1e293b; font-size: 0.9rem;">
+              👤 Admin Username <span style="color: #ef4444;">*</span>
             </label>
-            <input type="text" id="domain-input" placeholder="e.g., matrix.example.com" style="width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; transition: all 0.2s;">
-            <div class="info" style="margin-top: 0.25rem; font-size: 0.85rem; color: #64748b;">The public domain name that will point to your server. (Required)</div>
+            <input type="text" id="admin-username" placeholder="e.g., admin" style="width: 100%; max-width: 300px; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;">
           </div>
-          <div style="margin-bottom: 1.25rem;">
-            <label for="ip-input" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #1e293b;">
-              🖥️ Your Server IP Address <span style="color: #ef4444;">*</span>
+          <div>
+            <label for="admin-password" style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: #1e293b; font-size: 0.9rem;">
+              🔒 Admin Password <span style="color: #ef4444;">*</span>
             </label>
-            <input type="text" id="ip-input" placeholder="e.g., 192.0.2.1" style="width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; transition: all 0.2s;">
-            <div class="info" style="margin-top: 0.25rem; font-size: 0.85rem; color: #64748b;">The public IPv4 address of your Linux server. (Required)</div>
+            <input type="password" id="admin-password" placeholder="Enter strong password" style="width: 100%; max-width: 300px; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;">
+            <div style="margin-top: 0.25rem; font-size: 0.75rem; color: #64748b;">Minimum 8 characters, use a mix of letters, numbers, and symbols</div>
           </div>
         </div>
-        <button id="generate-command-btn" class="generate-btn">✨ Generate Setup Bash File</button>
-        <div id="generated-command-container" style="margin-top: 2rem;"></div>
-      `;
+        
+        <label>
+          <input type="checkbox" id="opt-create-admin" value="create-admin">
+          <span><strong>Create New Admin</strong> – Admin for managing users and rooms and more</span>
+        </label>
+      </div>
+
+      <div class="domain-divider"></div>
+
+      <div style="margin: 2rem 0;">
+        <div style="margin-bottom: 1.25rem;">
+          <label for="domain-input" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #1e293b;">
+            🌐 Your Domain Address <span style="color: #ef4444;">*</span>
+          </label>
+          <input type="text" id="domain-input" placeholder="e.g., matrix.example.com" style="width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; transition: all 0.2s;">
+          <div class="info" style="margin-top: 0.25rem; font-size: 0.85rem; color: #64748b;">The public domain name that will point to your server. (Required)</div>
+        </div>
+        <div style="margin-bottom: 1.25rem;">
+          <label for="ip-input" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #1e293b;">
+            🖥️ Your Server IP Address <span style="color: #ef4444;">*</span>
+          </label>
+          <input type="text" id="ip-input" placeholder="e.g., 192.0.2.1" style="width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; transition: all 0.2s;">
+          <div class="info" style="margin-top: 0.25rem; font-size: 0.85rem; color: #64748b;">The public IPv4 address of your Linux server. (Required)</div>
+        </div>
+      </div>
+      <button id="generate-command-btn" class="generate-btn">✨ Generate Setup Bash File</button>
+      <div id="generated-command-container" style="margin-top: 2rem;"></div>
+    `;
+
+      // Add event listener for the admin panel checkbox
+      const adminPanelCheckbox = document.getElementById('opt-admin-panel');
+      const adminCredentialsSection = document.getElementById('admin-credentials-section');
+
+      console.log('Admin panel checkbox found:', !!adminPanelCheckbox);
+      console.log('Admin credentials section found:', !!adminCredentialsSection);
+
+      if (adminPanelCheckbox && adminCredentialsSection) {
+        // Set initial state
+        if (adminPanelCheckbox.checked) {
+          adminCredentialsSection.style.display = 'block';
+        } else {
+          adminCredentialsSection.style.display = 'none';
+        }
+
+        adminPanelCheckbox.addEventListener('change', function () {
+          console.log('Admin checkbox changed, checked:', this.checked);
+          if (this.checked) {
+            adminCredentialsSection.style.display = 'block';
+            adminCredentialsSection.style.animation = 'fadeIn 0.3s ease';
+          } else {
+            adminCredentialsSection.style.display = 'none';
+            // Clear the fields when hidden
+            const usernameInput = document.getElementById('admin-username');
+            const passwordInput = document.getElementById('admin-password');
+            if (usernameInput) usernameInput.value = '';
+            if (passwordInput) passwordInput.value = '';
+          }
+        });
+      } else {
+        console.error('Admin panel elements not found!');
+      }
 
       // Get input elements AFTER they've been created
       const domainInput = document.getElementById('domain-input');
@@ -385,6 +447,16 @@
           const domain = domainField ? domainField.value.trim() : '';
           const ip = ipField ? ipField.value.trim() : '';
 
+          // Get admin credentials if admin panel is selected
+          const adminPanelSelected = document.getElementById('opt-admin-panel')?.checked || false;
+          const adminUsername = document.getElementById('admin-username')?.value || '';
+          const adminPassword = document.getElementById('admin-password')?.value || '';
+
+          if (adminPanelSelected && (!adminUsername || !adminPassword)) {
+            alert('Please enter both Admin Username and Password');
+            return;
+          }
+
           const customCommand = `mkdir synapse && cd synapse \nbash synapse-setup.sh`;
           const container = document.getElementById('generated-command-container');
           container.innerHTML = `<h3 style="margin-bottom: 0.75rem;">🚀 Your Custom Docker Stack Command</h3>`;
@@ -395,10 +467,11 @@
           note.style.fontSize = '0.95rem';
           note.style.color = '#64748b';
           note.innerHTML = `⚡ This downloads and runs the setup script with your selected components.<br>
-            ${domain ? `🌐 Domain set to: <code>${domain}</code><br>` : ''}
-            ${ip ? `🖥️ IP set to: <code>${ip}</code><br>` : ''}
-            🔒 Always review scripts before piping to bash.<br>
-            🐧 Designed for <strong>Linux servers</strong> with Docker and Docker Compose.`;
+          ${domain ? `🌐 Domain set to: <code>${domain}</code><br>` : ''}
+          ${ip ? `🖥️ IP set to: <code>${ip}</code><br>` : ''}
+          ${adminPanelSelected ? `👤 Admin user: <code>${adminUsername}</code><br>` : ''}
+          🔒 Always review scripts before piping to bash.<br>
+          🐧 Designed for <strong>Linux servers</strong> with Docker and Docker Compose.`;
           container.appendChild(note);
         });
       }

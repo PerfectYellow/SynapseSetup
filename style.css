@@ -358,6 +358,7 @@ pre {
     gap: 0.75rem;
     font-size: 1.1rem;
     cursor: pointer;
+    margin-bottom: 0.75rem;
 }
 
 input[type="checkbox"] {
@@ -634,4 +635,97 @@ button {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Divider styling */
+.admin-divider {
+  margin: 1rem 0;
+  border-top: 2px solid #e2e8f0;
+  position: relative;
+}
+
+/* Optional: Add a subtle label to the divider */
+.admin-divider::before {
+  content: "Admin Options";
+  position: absolute;
+  top: -12px;
+  left: 0;
+  background: white;
+  padding: 0 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.admin-divider:hover {
+  border-top-color: #94a3b8;
+  transition: border-color 0.2s ease;
+}
+
+.domain-divider {
+  margin: 1rem 0;
+  border-top: 2px solid #e2e8f0;
+  position: relative;
+}
+
+.domain-divider::before {
+  content: "Domain and IP";
+  position: absolute;
+  top: -12px;
+  left: 0;
+  background: white;
+  padding: 0 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+/* Optional: Make the divider stand out more on hover */
+.domain-divider:hover {
+  border-top-color: #94a3b8;
+  transition: border-color 0.2s ease;
+}
+
+/* Animation for smooth appearance/disappearance */
+#admin-credentials-section {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+/* Focus states for inputs */
+#admin-credentials-section input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Required field indicator */
+#admin-credentials-section label span {
+  font-weight: 600;
+}
+
+/* Optional: Add a subtle icon to the section */
+#admin-credentials-section::before {
+  content: "🔐";
+  position: absolute;
+  left: -25px;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#admin-credentials-section {
+  transition: all 0.3s ease;
 }
