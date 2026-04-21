@@ -10,11 +10,30 @@
   const infoCardsContainer = document.getElementById('info-cards');
 
   const GITHUB_REPO_URL = 'https://github.com/PerfectYellow/SynapseSetup.git';
-  const RAW_SCRIPT_URL = 'https://raw.githubusercontent.com/yourusername/matrix-synapse-setup/main/setup.sh';
 
   let isShrunk = false;
   let shrinkTimer = null;
   let scrollHandlerActive = true;
+
+  // Helper function to trigger download of a simple bash file
+  function downloadSimpleBashFile(filename) {
+    // Create bash file content with echo hello
+    const bashContent = '#!/bin/bash\necho "hello"\n';
+    // Create a Blob with the content
+    const blob = new Blob([bashContent], { type: 'application/x-shellscript' });
+    // Create a temporary URL for the Blob
+    const url = URL.createObjectURL(blob);
+    // Create a temporary anchor element
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    // Append to body, click, and remove
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    // Revoke the object URL to free memory
+    URL.revokeObjectURL(url);
+  }
 
   function shrinkHeader() {
     if (isShrunk) return;
@@ -48,7 +67,7 @@
   }
 
   // Auto-shrink after 500ms if no scroll
-  shrinkTimer = setTimeout(shrinkHeader, 500);
+  shrinkTimer = setTimeout(shrinkHeader, 1000);
 
   // Also shrink on scroll
   window.addEventListener('scroll', handleScroll, { passive: true });
@@ -226,7 +245,7 @@
         </div>
       </div>
 
-      <button id="generate-command-btn" class="generate-btn">✨ Generate Docker Compose Command</button>
+      <button id="generate-command-btn" class="generate-btn">✨ Generate Setup Bash File</button>
 
       <div id="generated-command-container" style="margin-top: 2rem;"></div>
     `;
@@ -264,6 +283,9 @@
     });
 
     document.getElementById('generate-command-btn').addEventListener('click', function () {
+      // Trigger download of simple bash file
+      downloadSimpleBashFile('synapse-setup.sh');
+
       const selected = [];
       if (document.getElementById('opt-synapse').checked) selected.push('synapse');
       if (document.getElementById('opt-sliding-sync').checked) selected.push('sliding-sync');
@@ -284,7 +306,7 @@
       if (domain) extraFlags += ` --domain "${domain}"`;
       if (ip) extraFlags += ` --ip "${ip}"`;
 
-      const customCommand = `bash <(curl -s ${RAW_SCRIPT_URL}) --profiles ${profiles}${extraFlags}`;
+      const customCommand = `mkdir synapse && cd synapse \nbash synapse-setup.sh`;
 
       const container = document.getElementById('generated-command-container');
       container.innerHTML = `
@@ -334,16 +356,19 @@
         </div>
       </div>
 
-      <button id="generate-config-btn" class="generate-btn" style="margin-top: 1.5rem;">📋 Generate Configuration Command</button>
+      <button id="generate-config-btn" class="generate-btn" style="margin-top: 1.5rem;">📋 Generate Config Bash File</button>
 
       <div id="generated-config-container" style="margin-top: 2rem;"></div>
     `;
 
     document.getElementById('generate-config-btn').addEventListener('click', function () {
+      // Trigger download of simple bash file
+      downloadSimpleBashFile('synapse-config.sh');
+
       const userSearchEnabled = document.querySelector('input[name="userSearch"]:checked').value === 'enable';
       const configFlag = userSearchEnabled ? '--enable-user-search' : '--disable-user-search';
 
-      const configCommand = `bash <(curl -s ${RAW_SCRIPT_URL}) --configure-only ${configFlag}`;
+      const configCommand = `cd synapse \nbash synapse-config.sh`;
 
       const container = document.getElementById('generated-config-container');
       container.innerHTML = `
