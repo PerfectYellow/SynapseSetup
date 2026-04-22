@@ -263,7 +263,6 @@
   }
 
   // ----- BUTTON 2: Custom Generator -----
-  // ----- BUTTON 2: Custom Generator -----
   console.log('🔵 Step 13: Setting up btnCustom listener');
   if (btnCustom) {
     btnCustom.addEventListener('click', function () {
@@ -536,6 +535,7 @@
           const isAdminValid = validateAdminFields();
 
           const adminPanelSelected = document.getElementById('opt-admin-panel')?.checked || false;
+          const createAdminSelected = document.getElementById('opt-create-admin')?.checked || false;
 
           if (!isValidDomainIp) {
             // Scroll to show the errors
@@ -568,21 +568,80 @@
           const adminUsername = document.getElementById('admin-username')?.value || '';
           const adminPassword = document.getElementById('admin-password')?.value || '';
 
-          const customCommand = `mkdir synapse && cd synapse \nbash synapse-setup.sh`;
+          // Determine which script to generate
+          let scriptToGenerate = null;
+          let scriptName = '';
+
+          if (adminPanelSelected && createAdminSelected) {
+            scriptToGenerate = 'fullAdminSetup';
+            scriptName = 'matrix-admin-setup.sh';
+          } else if (adminPanelSelected) {
+            scriptToGenerate = 'adminPanelSetup';
+            scriptName = 'matrix-admin-panel.sh';
+          } else if (createAdminSelected) {
+            scriptToGenerate = 'createAdminUser';
+            scriptName = 'matrix-create-admin.sh';
+          }
+
+          let downloadedScript = null;
+
+          // Generate and download the admin script if needed
+          if (scriptToGenerate && typeof window.generateAdminBashScript === 'function') {
+            try {
+              downloadedScript = window.generateAdminBashScript(scriptToGenerate, {
+                DOMAIN: domain,
+                ADMIN_USERNAME: adminUsername,
+                ADMIN_PASSWORD: adminPassword
+              });
+              // Auto-download the script
+              downloadBashFile(scriptName, downloadedScript.content);
+              console.log('✅ Admin script downloaded:', scriptName);
+            } catch (error) {
+              console.error('Error generating admin script:', error);
+            }
+          }
+
+          // Generate the main setup command
+          let mainSetupCommand = `mkdir synapse && cd synapse`;
+
+          // Add admin script execution to the command if needed
+          if (downloadedScript) {
+            mainSetupCommand += `\n\n# After Matrix stack is running, run the admin setup:\nbash ${scriptName}`;
+          }
+
           const container = document.getElementById('generated-command-container');
           container.innerHTML = `<h3 style="margin-bottom: 0.75rem;">🚀 Your Custom Docker Stack Command</h3>`;
-          const commandBlock = createCommandBlock(customCommand);
-          container.appendChild(commandBlock);
+
+          // Create command block for main setup
+          const mainCommandBlock = createCommandBlock(mainSetupCommand);
+          container.appendChild(mainCommandBlock);
+
+          // Add info about downloaded file
+          if (downloadedScript) {
+            const infoNote = document.createElement('div');
+            infoNote.style.marginTop = '1rem';
+            infoNote.style.padding = '0.75rem';
+            infoNote.style.background = '#e6f7e6';
+            infoNote.style.borderRadius = '8px';
+            infoNote.style.borderLeft = '4px solid #4caf50';
+            infoNote.innerHTML = `
+        <strong>✅ ${scriptName}</strong> has been automatically downloaded.<br>
+        Place it in the <code>synapse</code> folder before running the commands above.
+      `;
+            container.appendChild(infoNote);
+          }
+
           const note = document.createElement('p');
           note.style.marginTop = '1rem';
           note.style.fontSize = '0.95rem';
           note.style.color = '#64748b';
           note.innerHTML = `⚡ This downloads and runs the setup script with your selected components.<br>
-          ${domain ? `🌐 Domain set to: <code>${domain}</code><br>` : ''}
-          ${ip ? `🖥️ IP set to: <code>${ip}</code><br>` : ''}
-          ${adminPanelSelected ? `👤 Admin user: <code>${adminUsername}</code><br>` : ''}
-          🔒 Always review scripts before piping to bash.<br>
-          🐧 Designed for <strong>Linux servers</strong> with Docker and Docker Compose.`;
+    ${domain ? `🌐 Domain set to: <code>${domain}</code><br>` : ''}
+    ${ip ? `🖥️ IP set to: <code>${ip}</code><br>` : ''}
+    ${adminPanelSelected ? `👤 Admin Panel configured with user: <code>${adminUsername}</code><br>` : ''}
+    ${createAdminSelected ? `👥 Admin user creation included<br>` : ''}
+    🔒 Always review scripts before piping to bash.<br>
+    🐧 Designed for <strong>Linux servers</strong> with Docker and Docker Compose.`;
           container.appendChild(note);
         });
       }
