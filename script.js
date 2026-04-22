@@ -524,6 +524,16 @@
         generateBtn.addEventListener('click', function () {
           console.log('🟢 Generate button clicked');
 
+          const includeSynapse = document.getElementById('opt-synapse')?.checked || false;
+          const includeSlidingSync = document.getElementById('opt-sliding-sync')?.checked || false;
+          const includePostgres = document.getElementById('opt-postgres')?.checked || false;
+          const includeCaddy = document.getElementById('opt-caddy')?.checked || false;
+          const includeLiveKit = document.getElementById('opt-livekit')?.checked || false;
+          const includeCoturn = document.getElementById('opt-coturn')?.checked || false;
+          const adminPanelSelected = document.getElementById('opt-admin-panel')?.checked || false;
+          const createAdminSelected = document.getElementById('opt-create-admin')?.checked || false;
+
+
           // Get fresh references to inputs
           const domainField = document.getElementById('domain-input');
           const ipField = document.getElementById('ip-input');
@@ -534,115 +544,87 @@
           // Validate admin fields (only if admin panel is checked)
           const isAdminValid = validateAdminFields();
 
-          const adminPanelSelected = document.getElementById('opt-admin-panel')?.checked || false;
-          const createAdminSelected = document.getElementById('opt-create-admin')?.checked || false;
 
           if (!isValidDomainIp) {
-            // Scroll to show the errors
             const firstError = document.querySelector('#domain-error, #ip-error');
             if (firstError) {
               firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-            return; // Stop execution if validation fails
+            return;
           }
 
           if (adminPanelSelected && !isAdminValid) {
-            // Scroll to admin credentials section
             const adminSection = document.getElementById('admin-credentials-section');
             if (adminSection) {
               adminSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              // Highlight the section with a temporary background
               adminSection.style.transition = 'background 0.3s ease';
               adminSection.style.background = '#fee2e2';
               setTimeout(() => {
                 adminSection.style.background = '#f8fafc';
               }, 1000);
             }
-            return; // Stop execution if admin validation fails
+            return;
           }
 
           const domain = domainField ? domainField.value.trim() : '';
           const ip = ipField ? ipField.value.trim() : '';
-
-          // Get admin credentials if admin panel is selected
           const adminUsername = document.getElementById('admin-username')?.value || '';
           const adminPassword = document.getElementById('admin-password')?.value || '';
 
-          // Determine which script to generate
-          let scriptToGenerate = null;
-          let scriptName = '';
-
-          if (adminPanelSelected && createAdminSelected) {
-            scriptToGenerate = 'fullAdminSetup';
-            scriptName = 'matrix-admin-setup.sh';
-          } else if (adminPanelSelected) {
-            scriptToGenerate = 'adminPanelSetup';
-            scriptName = 'matrix-admin-panel.sh';
-          } else if (createAdminSelected) {
-            scriptToGenerate = 'createAdminUser';
-            scriptName = 'matrix-create-admin.sh';
-          }
-
-          let downloadedScript = null;
-
-          // Generate and download the admin script if needed
-          if (scriptToGenerate && typeof window.generateAdminBashScript === 'function') {
+          // Generate complete setup script
+          if (typeof window.generateMatrixSetupScript === 'function') {
             try {
-              downloadedScript = window.generateAdminBashScript(scriptToGenerate, {
+              const setupScript = window.generateMatrixSetupScript({
                 DOMAIN: domain,
+                IP: ip,
                 ADMIN_USERNAME: adminUsername,
-                ADMIN_PASSWORD: adminPassword
+                ADMIN_PASSWORD: adminPassword,
+                INCLUDE_SYNAPSE: includeSynapse.toString(),
+                INCLUDE_SLIDING_SYNC: includeSlidingSync.toString(),
+                INCLUDE_POSTGRES: includePostgres.toString(),
+                INCLUDE_CADDY: includeCaddy.toString(),
+                INCLUDE_LIVEKIT: includeLiveKit.toString(),
+                INCLUDE_COTURN: includeCoturn.toString(),
+                INCLUDE_ADMIN_PANEL: adminPanelSelected.toString(),
+                INCLUDE_CREATE_ADMIN: createAdminSelected.toString()
+
               });
+
               // Auto-download the script
-              downloadBashFile(scriptName, downloadedScript.content);
-              console.log('✅ Admin script downloaded:', scriptName);
+              downloadBashFile(setupScript.filename, setupScript.content);
+              console.log('✅ Complete setup script downloaded:', setupScript.filename);
+
+              // Display command
+              const container = document.getElementById('generated-command-container');
+              container.innerHTML = `<h3 style="margin-bottom: 0.75rem;">🚀 Your Complete Setup Command</h3>`;
+
+              const setupCommand = `mkdir synapse && cd synapse\nbash ${setupScript.filename}`;
+              const commandBlock = createCommandBlock(setupCommand);
+              container.appendChild(commandBlock);
+
+              const note = document.createElement('p');
+              note.style.marginTop = '1rem';
+              note.style.fontSize = '0.95rem';
+              note.style.color = '#64748b';
+              note.innerHTML = `✅ ${setupScript.filename} has been automatically downloaded.<br>
+⚡ Run the command above to start your Matrix deployment.<br>
+🌐 Domain: <code>${domain}</code><br>
+🖥️ IP: <code>${ip}</code><br>
+${adminPanelSelected ? `👤 Admin Panel user: <code>${adminUsername}</code><br>` : ''}
+${includeLiveKit ? '🎥 LiveKit enabled<br>' : ''}
+${includeCoturn ? '🔄 Coturn TURN server enabled<br>' : ''}
+🔒 Always review the script before running.<br>
+🐧 Designed for <strong>Linux servers</strong> with Docker.`;
+              container.appendChild(note);
+
             } catch (error) {
-              console.error('Error generating admin script:', error);
+              console.error('Error generating setup script:', error);
+              alert('Error generating setup script: ' + error.message);
             }
+          } else {
+            console.error('❌ generateMatrixSetupScript not available!');
+            alert('Setup template not loaded. Please refresh the page.');
           }
-
-          // Generate the main setup command
-          let mainSetupCommand = `mkdir synapse && cd synapse`;
-
-          // Add admin script execution to the command if needed
-          if (downloadedScript) {
-            mainSetupCommand += `\n\n# After Matrix stack is running, run the admin setup:\nbash ${scriptName}`;
-          }
-
-          const container = document.getElementById('generated-command-container');
-          container.innerHTML = `<h3 style="margin-bottom: 0.75rem;">🚀 Your Custom Docker Stack Command</h3>`;
-
-          // Create command block for main setup
-          const mainCommandBlock = createCommandBlock(mainSetupCommand);
-          container.appendChild(mainCommandBlock);
-
-          // Add info about downloaded file
-          if (downloadedScript) {
-            const infoNote = document.createElement('div');
-            infoNote.style.marginTop = '1rem';
-            infoNote.style.padding = '0.75rem';
-            infoNote.style.background = '#e6f7e6';
-            infoNote.style.borderRadius = '8px';
-            infoNote.style.borderLeft = '4px solid #4caf50';
-            infoNote.innerHTML = `
-        <strong>✅ ${scriptName}</strong> has been automatically downloaded.<br>
-        Place it in the <code>synapse</code> folder before running the commands above.
-      `;
-            container.appendChild(infoNote);
-          }
-
-          const note = document.createElement('p');
-          note.style.marginTop = '1rem';
-          note.style.fontSize = '0.95rem';
-          note.style.color = '#64748b';
-          note.innerHTML = `⚡ This downloads and runs the setup script with your selected components.<br>
-    ${domain ? `🌐 Domain set to: <code>${domain}</code><br>` : ''}
-    ${ip ? `🖥️ IP set to: <code>${ip}</code><br>` : ''}
-    ${adminPanelSelected ? `👤 Admin Panel configured with user: <code>${adminUsername}</code><br>` : ''}
-    ${createAdminSelected ? `👥 Admin user creation included<br>` : ''}
-    🔒 Always review scripts before piping to bash.<br>
-    🐧 Designed for <strong>Linux servers</strong> with Docker and Docker Compose.`;
-          container.appendChild(note);
         });
       }
     });
