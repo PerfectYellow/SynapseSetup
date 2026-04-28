@@ -21,6 +21,7 @@
   });
 
   const GITHUB_REPO_URL = 'https://github.com/PerfectYellow/SynapseSetup.git';
+  const GITHUB_REPO_FULL_BASH_URL = 'https://raw.githubusercontent.com/PerfectYellow/SynapseSetup/main/MatrixSynapseSetup.sh';
 
   let isShrunk = false;
   let shrinkTimer = null;
@@ -239,7 +240,7 @@
       console.log('🟢 btnFull clicked');
       setActiveButton(btnFull);
       hideInfoCards();
-      const cloneCommand = `git clone ${GITHUB_REPO_URL} synapse\ncd synapse\nbash MatrixSynapseSetup.sh`;
+      const cloneCommand = `mkdir synapse && cd synapse\ncurl -L ${GITHUB_REPO_FULL_BASH_URL} \nbash MatrixSynapseSetup.sh`;
       outputDiv.style.display = 'block';
       outputDiv.innerHTML = `
         <h2 style="margin-bottom: 0.5rem; font-weight: 600;">📦 Full Docker Stack Setup</h2>
